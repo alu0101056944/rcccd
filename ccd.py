@@ -86,51 +86,33 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
   prev = dist
   indexOfR = len(th) # length = 3
   # Para cada combinación de articulaciones:
-  # Por cada iteración, cambiamos las coordenada de todos 
-  # los puntos de la articulación:
-  for i in range(len(th)): # En este caso, itera desde 0 a 2
+  # Por cada iteración, cambiamos las coordenada de todos los puntos de la articulación:
+  for i in range(len(th)):
     indexOfR -= 1 # previous of last
     print "Iteracion: ", iteracion, "------------------------------------------------"
-    print "Posiciones", O
-    # print "IndexOfR:", indexOfR
+    # print "Posiciones", O
     # cálculo de la cinemática inversa:
-    # Cálculo del punto E:
     posXOfR = O[i][indexOfR][0]
     posYOfR = O[i][indexOfR][1]
-    # print "posXOfR: ", posXOfR
-    # print "posYOfR: ", posYOfR
-    # calcular distancias de R a objetivo
     vectRToObj = [objetivo[0] - posXOfR, objetivo[1] - posYOfR]
     distRToObj = sqrt(vectRToObj[0] ** 2 + vectRToObj[1] ** 2)
-    # distancia de R a O_último
     vectRToLast = [O[i][3][0] - posXOfR, O[i][3][1] - posYOfR]
     distRToLast = sqrt(vectRToLast[0] ** 2 + vectRToLast[1] ** 2)
-    # y distancia de E a objetivo
-    # vectLastToObj = [O[i][3][0] - objetivo[0], O[i][3][1] - objetivo[1]]
-    # distLastToObj= sqrt(vectLastToObj[0] ** 2 + vectLastToObj[1] ** 2)
     # Producto vectorial
     dividendoVectorial = (vectRToObj[0] * vectRToLast[0]) + (vectRToObj[1] * vectRToLast[1])
     divisorVectorial = distRToLast * distRToObj
-    # Imprimimos datos de distancias
-    # print "vectRToObj: ", vectRToObj    # (0, 10)
-    # print "DistRToObj: ", distRToObj    # 10
-    # print "vectRToLast: ", vectRToLast  # ()
-    # print "DistRToLast: ", distRToLast  # 5
     # Calcular el ángulo entre E y Objetivo
-    print "dividendoVectorial", dividendoVectorial
-    print "divisorVectorial: ", divisorVectorial
     thetaLastToObj = np.arccos(dividendoVectorial / divisorVectorial)
     print "thetaLastToObj: ", thetaLastToObj
-    # Calcular vector perpendicular por producto vectorial
-    # productoVectorial = distRToObj * distRToLast * sin(thetaLastToObj)
-    # print "ProductoVectorial: ", productoVectorial
-    productoVectorial = np.cross(O[i][3], objetivo)
-    if productoVectorial < 0:
+    # Calcular el producto vectorial
+    productoVectorial = np.cross([O[i][3][0], O[i][3][1], 0], [objetivo[0], objetivo[1], 0])
+    print "O[i][3]: ", O[i][3]
+    print "objetivo", objetivo
+    print "ProductoVectorial: ", productoVectorial
+    if productoVectorial[2] < EPSILON:
       thetaLastToObj = -thetaLastToObj
-    # Añadir el ángulo a R
-    indexFromLast = len(th) - i - 1
     # Calcula la cinemática directa de la tabla construida, calcula el conjunto de nuevos puntos y los asigna
-    th[indexFromLast] += thetaLastToObj
+    th[indexOfR] += thetaLastToObj
     O[i+1] = cin_dir(th,a)
 
   print "O[-1]:", O[-1]
