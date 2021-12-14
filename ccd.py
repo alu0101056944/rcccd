@@ -89,9 +89,7 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
   # Por cada iteración, cambiamos las coordenada de todos los puntos de la articulación:
   for i in range(len(th)):
     indexOfR -= 1 # previous of last
-    print "Iteracion: ", iteracion, "------------------------------------------------"
-    # print "Posiciones", O
-    # cálculo de la cinemática inversa:
+    # Cálculo de la cinemática inversa:
     posXOfR = O[i][indexOfR][0]
     posYOfR = O[i][indexOfR][1]
     vectRToObj = [objetivo[0] - posXOfR, objetivo[1] - posYOfR]
@@ -103,20 +101,14 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
     divisorVectorial = distRToLast * distRToObj
     # Calcular el ángulo entre E y Objetivo
     thetaLastToObj = np.arccos(dividendoVectorial / divisorVectorial)
-    print "thetaLastToObj: ", thetaLastToObj
     # Calcular el producto vectorial
     productoVectorial = np.cross([O[i][3][0], O[i][3][1], 0], [objetivo[0], objetivo[1], 0])
-    print "O[i][3]: ", O[i][3]
-    print "objetivo", objetivo
-    print "ProductoVectorial: ", productoVectorial
     if productoVectorial[2] < EPSILON:
       thetaLastToObj = -thetaLastToObj
     # Calcula la cinemática directa de la tabla construida, calcula el conjunto de nuevos puntos y los asigna
     th[indexOfR] += thetaLastToObj
     O[i+1] = cin_dir(th,a)
 
-  print "O[-1]:", O[-1]
-  print "O[-1][-1]:", O[-1][-1], "A"
   dist = np.linalg.norm(np.subtract(objetivo,O[-1][-1]))
   print "\n- Iteracion " + str(iteracion) + ':'
   muestra_origenes(O[-1])
