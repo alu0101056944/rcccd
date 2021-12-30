@@ -59,9 +59,15 @@ def cin_dir(th,a):
 # ******************************************************************************
 # Cálculo de la cinemática inversa de forma iterativa por el método CCD
 
+# Modificación:
+# Añadir ángulos máximos para cada una de las articulaciones en ambos sentidos
+max_th=[0, 1, 2]
+# max_th=[3.1416, 3.1416, 3.1416]  # Valores en radianes por defecto. Es decir, permiten flexibilidad plena.
+
 # valores articulares arbitrarios para la cinemática directa inicial
+var=[0, 0, 0]   # matriz de longitud modificada de cada articulación
 th=[0.,0.,0.]   # ángulos de cada punto
-a =[5.,5.,5.]   # distancias de cada parte
+a =[5. + var[0], 5. + var[1], 5. + var[2]]   # distancias de cada parte
 L = sum(a) # variable para representación gráfica
 EPSILON = .01
 
@@ -107,6 +113,10 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
       thetaLastToObj = -thetaLastToObj
     # Calcula la cinemática directa de la tabla construida, calcula el conjunto de nuevos puntos y los asigna
     th[indexOfR] += thetaLastToObj
+    if th[indexOfR] < -max_th[indexOfR]:
+      th[indexOfR] = -max_th[indexOfR]
+    elif th[indexOfR] > max_th[indexOfR]:
+      th[indexOfR] = max_th[indexOfR]
     O[i+1] = cin_dir(th,a)
 
   dist = np.linalg.norm(np.subtract(objetivo,O[-1][-1]))
