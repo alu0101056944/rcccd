@@ -61,13 +61,12 @@ def cin_dir(th,a):
 
 # Modificación:
 # Añadir ángulos máximos para cada una de las articulaciones en ambos sentidos
-max_th=[0, 1, 2]
+max_th=[3.1416, 3.1416, 3.1416]
 # max_th=[3.1416, 3.1416, 3.1416]  # Valores en radianes por defecto. Es decir, permiten flexibilidad plena.
 
 # valores articulares arbitrarios para la cinemática directa inicial
-var=[0, 0, 0]   # matriz de longitud modificada de cada articulación
-th=[0.,0.,0.]   # ángulos de cada punto
-a =[5. + var[0], 5. + var[1], 5. + var[2]]   # distancias de cada parte
+th=[3.1416/2.,0.,0.]   # ángulos de cada punto
+a =[2., 3., 3.]   # distancias de cada parte
 L = sum(a) # variable para representación gráfica
 EPSILON = .01
 
@@ -108,8 +107,11 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
     # Calcular el ángulo entre E y Objetivo
     thetaLastToObj = np.arccos(dividendoVectorial / divisorVectorial)
     # Calcular el producto vectorial
-    productoVectorial = np.cross([O[i][3][0], O[i][3][1], 0], [objetivo[0], objetivo[1], 0])
+    productoVectorial = np.cross([vectRToLast[0], vectRToLast[1], 0], [objetivo[0], objetivo[1], 0])
+    print "productoVectorial: ", productoVectorial
     if productoVectorial[2] < EPSILON:
+      print "negative in arm ", i
+      print "productoVectorial[2]: ", productoVectorial[2]
       thetaLastToObj = -thetaLastToObj
     # Calcula la cinemática directa de la tabla construida, calcula el conjunto de nuevos puntos y los asigna
     th[indexOfR] += thetaLastToObj
@@ -117,6 +119,14 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
       th[indexOfR] = -max_th[indexOfR]
     elif th[indexOfR] > max_th[indexOfR]:
       th[indexOfR] = max_th[indexOfR]
+    # Antes de calcular la cinemática directa, sabemos la distancia que falta respecto al punto
+    if max_th[indexOfR] == 0:
+      vectLastToObj = [objetivo[0] - O[i][3][0], objetivo[1] - O[i][3][1]]
+      distLastToObj = sqrt(vectLastToObj[0] ** 2 + vectLastToObj[1] ** 2)
+      if distLastToObj > EPSILON:
+        a[indexOfR] += distLastToObj
+        print "a: ", a[indexOfR]
+    # Calcular la cinemática directa
     O[i+1] = cin_dir(th,a)
 
   dist = np.linalg.norm(np.subtract(objetivo,O[-1][-1]))
