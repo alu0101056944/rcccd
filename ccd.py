@@ -65,7 +65,7 @@ max_th=[3.1416, 3.1416, 3.1416]
 # max_th=[3.1416, 3.1416, 3.1416]  # Valores en radianes por defecto. Es decir, permiten flexibilidad plena.
 
 # valores articulares arbitrarios para la cinemática directa inicial
-th=[3.1416/2.,0.,0.]   # ángulos de cada punto
+th=[0.,0.,0.]   # ángulos de cada punto
 a =[2., 3., 3.]   # distancias de cada parte
 L = sum(a) # variable para representación gráfica
 EPSILON = .01
@@ -107,7 +107,7 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
     # Calcular el ángulo entre E y Objetivo
     thetaLastToObj = np.arccos(dividendoVectorial / divisorVectorial)
     # Calcular el producto vectorial
-    productoVectorial = np.cross([vectRToLast[0], vectRToLast[1], 0], [objetivo[0], objetivo[1], 0])
+    productoVectorial = np.cross([vectRToLast[0], vectRToLast[1], 0], [vectRToObj[0], vectRToObj[1], 0])
     print "productoVectorial: ", productoVectorial
     if productoVectorial[2] < EPSILON:
       print "negative in arm ", i
@@ -115,10 +115,10 @@ while (dist > EPSILON and abs(prev-dist) > EPSILON/100.):
       thetaLastToObj = -thetaLastToObj
     # Calcula la cinemática directa de la tabla construida, calcula el conjunto de nuevos puntos y los asigna
     th[indexOfR] += thetaLastToObj
-    if th[indexOfR] < -max_th[indexOfR]:
-      th[indexOfR] = -max_th[indexOfR]
-    elif th[indexOfR] > max_th[indexOfR]:
-      th[indexOfR] = max_th[indexOfR]
+    # if th[indexOfR] < -max_th[indexOfR]:
+    #   th[indexOfR] = -max_th[indexOfR]
+    # elif th[indexOfR] > max_th[indexOfR]:
+    #   th[indexOfR] = max_th[indexOfR]
     # Antes de calcular la cinemática directa, sabemos la distancia que falta respecto al punto
     if max_th[indexOfR] == 0:
       vectLastToObj = [objetivo[0] - O[i][3][0], objetivo[1] - O[i][3][1]]
